@@ -15,5 +15,15 @@ namespace ConsoleApp.DAL
         {
             optionsBuilder.UseSqlServer("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = BookAppDb;");
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Book>()
+                .HasKey(book => book.BookId);
+
+            modelBuilder.Entity<Book>()
+                .Property(book => book.Title)
+                .IsRequired()
+                .HasMaxLength(100);
+        }
     }
 }
