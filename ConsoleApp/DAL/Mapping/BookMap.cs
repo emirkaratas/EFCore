@@ -18,7 +18,11 @@ namespace ConsoleApp.DAL.Mapping
                 .IsRequired()
                 .HasMaxLength(150);
             builder.Property(book => book.CreatedDate)
-                .HasDefaultValue(DateTime.Now);
+                .HasDefaultValueSql("GETDATE()");
+            builder.HasOne(b=>b.Category)
+                .WithMany(c=>c.Books)
+                .HasForeignKey(b=>b.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
