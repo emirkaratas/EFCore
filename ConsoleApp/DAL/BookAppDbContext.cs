@@ -1,4 +1,5 @@
-﻿using ConsoleApp.Entities;
+﻿using ConsoleApp.DAL.Mapping;
+using ConsoleApp.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,13 +18,7 @@ namespace ConsoleApp.DAL
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Book>()
-                .HasKey(book => book.BookId);
-
-            modelBuilder.Entity<Book>()
-                .Property(book => book.Title)
-                .IsRequired()
-                .HasMaxLength(100);
+            modelBuilder.ApplyConfiguration(new BookMap());
         }
     }
 }
