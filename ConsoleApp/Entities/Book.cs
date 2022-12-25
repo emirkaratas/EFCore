@@ -11,7 +11,9 @@ namespace ConsoleApp.Entities
         public int BookId { get; set; }
         public string Title { get; set; }
         public DateTime CreatedDate { get; set; }
+        public decimal Price { get; set; }
         public int? CategoryId { get; set; }
         public Category Category { get; set; }
+        public BookDetail BookDetail { get; set; }
     }
 }
