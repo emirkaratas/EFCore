@@ -15,5 +15,6 @@ namespace ConsoleApp.Entities
         public int? CategoryId { get; set; }
         public Category Category { get; set; }
         public BookDetail BookDetail { get; set; }
+        public ICollection<BookAuthor> BookAuthors { get; set; }
     }
 }

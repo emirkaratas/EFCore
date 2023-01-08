@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConsoleApp.Migrations
 {
     [DbContext(typeof(BookAppDbContext))]
-    [Migration("20221225150326_BookAndBookDetailOneToOneRelationContext")]
-    partial class BookAndBookDetailOneToOneRelationContext
+    [Migration("20230108145717_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,32 @@ namespace ConsoleApp.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ConsoleApp.Entities.Author", b =>
+                {
+                    b.Property<int>("AuthorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuthorId"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AuthorId");
+
+                    b.ToTable("Authors");
+                });
 
             modelBuilder.Entity("ConsoleApp.Entities.Book", b =>
                 {
@@ -57,6 +83,29 @@ namespace ConsoleApp.Migrations
                     b.ToTable("Books");
                 });
 
+            modelBuilder.Entity("ConsoleApp.Entities.BookAuthor", b =>
+                {
+                    b.Property<int>("BookAuthorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookAuthorId"));
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BookAuthorId");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("BookAuthors");
+                });
+
             modelBuilder.Entity("ConsoleApp.Entities.BookDetail", b =>
                 {
                     b.Property<int>("BookDetailId")
@@ -81,14 +130,14 @@ namespace ConsoleApp.Migrations
                     b.Property<int>("Year")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasDefaultValue(2022);
+                        .HasDefaultValue(2023);
 
                     b.HasKey("BookDetailId");
 
                     b.HasIndex("BookId")
                         .IsUnique();
 
-                    b.ToTable("BookDetail");
+                    b.ToTable("BookDetails");
                 });
 
             modelBuilder.Entity("ConsoleApp.Entities.Category", b =>
@@ -127,6 +176,25 @@ namespace ConsoleApp.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("ConsoleApp.Entities.BookAuthor", b =>
+                {
+                    b.HasOne("ConsoleApp.Entities.Author", "Author")
+                        .WithMany("BookAuthors")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConsoleApp.Entities.Book", "Book")
+                        .WithMany("BookAuthors")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Book");
+                });
+
             modelBuilder.Entity("ConsoleApp.Entities.BookDetail", b =>
                 {
                     b.HasOne("ConsoleApp.Entities.Book", "Book")
@@ -138,8 +206,15 @@ namespace ConsoleApp.Migrations
                     b.Navigation("Book");
                 });
 
+            modelBuilder.Entity("ConsoleApp.Entities.Author", b =>
+                {
+                    b.Navigation("BookAuthors");
+                });
+
             modelBuilder.Entity("ConsoleApp.Entities.Book", b =>
                 {
+                    b.Navigation("BookAuthors");
+
                     b.Navigation("BookDetail")
                         .IsRequired();
                 });
